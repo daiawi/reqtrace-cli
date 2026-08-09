@@ -13,7 +13,7 @@ def cli():
 @cli.command()
 @click.option('--dir', type=click.Path(exists=True, file_okay=False, path_type=Path), default='.')
 def scan(dir: Path):
-	"""Search directory for requirements, tests, and package descriptions"""
+	"""Search directory for paths to requirements, tests, and package descriptions"""
 	project = find_packages(dir)
 
 	click.echo(f"Showing results for directories under {project.root.resolve()}")
@@ -25,6 +25,8 @@ def scan(dir: Path):
 	for pkg in project.packages:
 		click.echo(f"\nPackage: {pkg.root}")
 		click.echo(_format_paths("REQUIREMENTS", pkg.requirements_md))
+		click.echo(_format_paths("TESTS", pkg.tests))
+
 
 # AI-Generated Function
 def _format_paths(label: str, paths: list[Path]) -> str:

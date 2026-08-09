@@ -8,6 +8,7 @@ class Package:
 	root: Path
 	package_xml: Path
 	requirements_md: list[Path] = field(default_factory=list)
+	tests: list[Path] = field(default_factory=list)
 
 
 @dataclass
