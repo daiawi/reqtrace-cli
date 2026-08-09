@@ -1,0 +1,4 @@
+[submodule "test/packages/ros2-fixture"]
+	path = test/packages/ros2-fixture
+	url = https://github.com/willd182/learn-ros2-cavs
+	branch = solution
