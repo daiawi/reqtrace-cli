@@ -13,7 +13,7 @@ def find_packages(root: Path) -> Project:
 		packages.append(Package(
 			root=pkg_root,
 			package_xml=package_xml,
-			requirements_md=requirements[0] if requirements else None,
+			requirements_md=requirements
 		))
 
 	return Project(root=root, packages=packages)

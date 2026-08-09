@@ -24,4 +24,14 @@ def scan(dir: Path):
 
 	for pkg in project.packages:
 		click.echo(f"\nPackage: {pkg.root}")
-		click.echo(f"\tREQUIREMENTS: {pkg.requirements_md or 'MISSING'}")
+		click.echo(_format_paths("REQUIREMENTS", pkg.requirements_md))
+
+# AI-Generated Function
+def _format_paths(label: str, paths: list[Path]) -> str:
+    if not paths:
+        return f"\t{label}: MISSING"
+    if len(paths) == 1:
+        return f"\t{label}: {paths[0]}"
+    lines = [f"\t{label}: {len(paths)} found"]
+    lines += [f"\t\t- {p}" for p in paths]
+    return "\n".join(lines)

@@ -7,7 +7,7 @@ from pathlib import Path
 class Package:
 	root: Path
 	package_xml: Path
-	requirements_md: Path | None = None
+	requirements_md: list[Path] = field(default_factory=list)
 
 
 @dataclass
