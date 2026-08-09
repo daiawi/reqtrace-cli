@@ -1,9 +1,7 @@
-import typer
-from typing_extensions import Annotated
+import click
+from typing import TextIO
 
-def parse(
-		filename: Annotated[str, typer.Argument(help="The path of the file to parse")]
-):
-	with open(filename) as f:
-		print(f.read())
-
+@click.command()
+@click.argument('file', type = click.File('r'))
+def cli(file: TextIO):
+	print(file.read())

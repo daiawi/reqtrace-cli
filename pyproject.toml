@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "reqtrace-cli"
-version = "0.0.1"
+version = "0.0.2"
 authors = [
   { name="Daniel Williams", email="willd182@my.erau.com" },
 ]
@@ -12,8 +12,7 @@ description = "A CLI tool to parse REQUIREMENTS.md files into requirements trace
 readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
-  "typer>=0.12.0",
-  "typing_extensions ~= 4.16.0"
+  "click~=8.4.2",
 ]
 
 classifiers = [
@@ -24,7 +23,7 @@ license = "Apache-2.0"
 license-files = ["LICEN[CS]E*"]
 
 [project.scripts]
-reqtrace = "reqtrace.cli:app"
+reqtrace = "reqtrace.parser:cli"
 
 [project.urls]
 Homepage = "https://github.com/daiawi/reqtrace-cli"
