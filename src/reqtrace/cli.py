@@ -58,7 +58,7 @@ def requirements(file: Path):
 		click.echo(f"!! REQUIREMENTS FILE HAS PROBLEMS !!\n")
 
 		for issue in parsed_reqs.issues:
-			click.secho(f"{issue.level.upper()}" + f"\n{issue.message}\n", 
+			click.secho(f"{issue.level.upper()}" + f"\n{issue.message}\n",
 			   fg= "red" if issue.level == "error" else "yellow")
 
 		if has_errors:

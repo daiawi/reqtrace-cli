@@ -20,11 +20,12 @@ def parse_requirements_file(file: Path) -> ParsedRequirements:
 
 	return ParsedRequirements(requirements=reqs, issues=issues)
 
+
 def check_file_format(file_name: str, lines: list[str]) -> list[FormatIssue]:
 	issues = []
 
 	if file_name != "REQUIREMENTS.md":
-		issues.append(FormatIssue("error", f"{file_name} must be named REQUIREMENTS.md to be found")) 
+		issues.append(FormatIssue("error", f"{file_name} must be named REQUIREMENTS.md to be found"))
 
 	if not lines:
 		issues.append(FormatIssue("error", f"Provided file is empty and/or contains no text"))
@@ -42,19 +43,19 @@ def extract_requirements(lines: list[str]) -> list[Requirement]:
 
 	for line_number, line in enumerate(lines, start=1):
 			stripped = line.strip()
-	
+
 			if not stripped:
 				continue
 
 			if stripped.startswith("## "):
 				category = stripped[2:]
 				continue
-	
+
 			parts = line.split(":", 1)
-	
+
 			if len(parts) != 2:
 				continue
-	
+
 			id = parts[0].strip()
 			description = parts[1].strip()
 			reqs.append(Requirement(
@@ -66,6 +67,7 @@ def extract_requirements(lines: list[str]) -> list[Requirement]:
 
 	return reqs
 
+
 def check_for_no_requirements(reqs: list[Requirement]) -> list[FormatIssue]:
 	issues = []
 
@@ -76,6 +78,7 @@ def check_for_no_requirements(reqs: list[Requirement]) -> list[FormatIssue]:
 		))
 
 	return issues
+
 
 def check_for_empty_fields(reqs: list[Requirement]) -> list[FormatIssue]:
 	issues = []
@@ -112,15 +115,16 @@ def check_for_duplicate_requirements(reqs: list[Requirement])-> list[FormatIssue
 				f"Duplicate requirement ID '{req_id}' found on lines {', '.join(map(str,lines))}",
 				req_id=req.id
 			))
-	
+
 	return issues
+
 
 def filter_valid_requirements(parsed_reqs: ParsedRequirements) -> list[Requirement]:
 	bad_reqs = {
 		issue.req_id
 		for issue in parsed_reqs.issues
 		if issue.req_id is not None
-	}	
+	}
 
 	if parsed_reqs.requirements is None:
 		return []
