@@ -3,7 +3,7 @@ import click
 from pathlib import Path
 
 from .discover import find_packages
-from .parse import validate_requirements_file
+from .parse import parse_requirements_file
 
 @click.group()
 def cli():
@@ -50,14 +50,14 @@ def parse():
 @click.argument("file", type=click.Path(exists=True, file_okay=True, dir_okay=False, readable=True, path_type=Path))
 def requirements(file: Path):
 	"""Extract requirements from REQUIREMENTS.md files."""
-	issues = validate_requirements_file(file)
+	parsed_reqs = parse_requirements_file(file)
 
-	has_errors = any(issue.level == "error" for issue in issues)
+	has_errors = any(issue.level == "error" for issue in parsed_reqs.issues)
 
-	if issues:
+	if parsed_reqs.issues:
 		click.echo(f"!! REQUIREMENTS FILE HAS PROBLEMS !!\n")
 
-		for issue in issues:
+		for issue in parsed_reqs.issues:
 			click.secho(f"{issue.level.upper()}" + f"\n{issue.message}\n", 
 			   fg= "red" if issue.level == "error" else "yellow")
 

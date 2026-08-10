@@ -31,3 +31,9 @@ class Requirement:
 	description: str
 	line_number: int | None = None
 	category: str | None = None
+
+
+@dataclass
+class ParsedRequirements:
+	requirements: list[Requirement] | None
+	issues: list[FormatIssue]
