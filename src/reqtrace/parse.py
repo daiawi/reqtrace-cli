@@ -84,12 +84,14 @@ def check_for_empty_fields(reqs: list[Requirement]) -> list[FormatIssue]:
 		if not req.id:
 			issues.append(FormatIssue(
 				"error",
-				f"Missing ID (somehow) on line {req.line_number}"
+				f"Missing ID (somehow) on line {req.line_number}",
+				req_id=req.id
 			))
 		elif not req.description:
 			issues.append(FormatIssue(
 				"warning",
-				f"Missing description for '{req.id}' on line {req.line_number}"
+				f"Missing description for '{req.id}' on line {req.line_number}",
+				req_id=req.id
 			))
 
 	return issues
@@ -107,8 +109,20 @@ def check_for_duplicate_requirements(reqs: list[Requirement])-> list[FormatIssue
 		if len(lines) > 1:
 			issues.append(FormatIssue(
 				"warning",
-				f"Duplicate requirement ID '{req_id}' " +
-				f"found on lines {', '.join(map(str,lines))}"
+				f"Duplicate requirement ID '{req_id}' found on lines {', '.join(map(str,lines))}",
+				req_id=req.id
 			))
 	
 	return issues
+
+def filter_valid_requirements(parsed_reqs: ParsedRequirements) -> list[Requirement]:
+	bad_reqs = {
+		issue.req_id
+		for issue in parsed_reqs.issues
+		if issue.req_id is not None
+	}	
+
+	if parsed_reqs.requirements is None:
+		return []
+
+	return [req for req in parsed_reqs.requirements if req.id not in bad_reqs]

@@ -3,7 +3,7 @@ import click
 from pathlib import Path
 
 from .discover import find_packages
-from .parse import parse_requirements_file
+from .parse import parse_requirements_file, filter_valid_requirements
 
 @click.group()
 def cli():
@@ -64,10 +64,12 @@ def requirements(file: Path):
 		if has_errors:
 			raise click.exceptions.Exit(1)
 
-	if parsed_reqs.requirements:
-		click.echo(f"Found {len(parsed_reqs.requirements)} requirements:\n")
+	valid_reqs = filter_valid_requirements(parsed_reqs)
 
-		for req in parsed_reqs.requirements:
+	if valid_reqs:
+		click.echo(f"Found {len(valid_reqs)} valid requirements:\n")
+
+		for req in valid_reqs:
 			click.echo(f"\t{req.id}: {req.description}\n")
 
 

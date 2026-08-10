@@ -22,7 +22,7 @@ class Project:
 class FormatIssue:
 	level: Literal["warning", "error"]
 	message: str
-	line: int | None = None
+	req_id: str | None = None
 
 
 @dataclass
