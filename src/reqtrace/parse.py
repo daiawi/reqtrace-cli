@@ -14,6 +14,7 @@ def parse_requirements_file(file: Path) -> ParsedRequirements:
 		return ParsedRequirements(requirements= None, issues=issues)
 
 	reqs = extract_requirements(lines)
+	issues += check_for_no_requirements(reqs)
 	issues += check_for_empty_fields(reqs)
 	issues += check_for_duplicate_requirements(reqs)
 
@@ -65,6 +66,16 @@ def extract_requirements(lines: list[str]) -> list[Requirement]:
 
 	return reqs
 
+def check_for_no_requirements(reqs: list[Requirement]) -> list[FormatIssue]:
+	issues = []
+
+	if not reqs:
+		issues.append(FormatIssue(
+			"error",
+			"No requirements were found. Expected format is 'REQ-ID: Description'"
+		))
+
+	return issues
 
 def check_for_empty_fields(reqs: list[Requirement]) -> list[FormatIssue]:
 	issues = []

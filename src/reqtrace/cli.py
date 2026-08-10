@@ -64,6 +64,12 @@ def requirements(file: Path):
 		if has_errors:
 			raise click.exceptions.Exit(1)
 
+	if parsed_reqs.requirements:
+		click.echo(f"Found {len(parsed_reqs.requirements)} requirements:\n")
+
+		for req in parsed_reqs.requirements:
+			click.echo(f"\t{req.id}: {req.description}\n")
+
 
 @parse.command()
 def pytest():

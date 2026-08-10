@@ -1,10 +1,7 @@
+# Bad Requirements Example
 
+GOOD-REQ-1: This has a description
 
-ACC-TST-01: Description 1
-ACC-TST-02: Description 2
-ACC-TST-01: Description 3
-
-:
-: What?
-
-Blah:
+BAD-REQ-1:
+BAD-REQ-2 What?
+BAD-REQ-1: has description
