@@ -12,7 +12,8 @@ def cli():
 
 @cli.command()
 @click.option('--dir', type=click.Path(exists=True, file_okay=False, path_type=Path), default='.')
-def scan(dir: Path):
+@click.option('--all', 'show_all', is_flag=True, help="Include packages without requirements.", default=False)
+def scan(dir: Path, show_all: bool):
 	"""Search directory for paths to requirements, tests, and package descriptions"""
 	project = find_packages(dir)
 
@@ -22,7 +23,15 @@ def scan(dir: Path):
 		click.echo("  No package.xml files found.")
 		return
 
-	for pkg in project.packages:
+	# Filter package list to only those containing requirements
+	packages = project.packages if show_all else [
+		pkg for pkg in project.packages if pkg.requirements_md
+	]
+
+	if not packages:
+		click.echo("  No packages with REQUIREMENTS.md files found.")
+
+	for pkg in packages:
 		click.echo(f"\nPackage: {pkg.root}")
 		click.echo(_format_paths("REQUIREMENTS", pkg.requirements_md))
 		click.echo(_format_paths("TESTS", pkg.tests))
