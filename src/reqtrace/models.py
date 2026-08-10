@@ -1,6 +1,7 @@
 # src/reqtrace/models.py
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Literal
 
 
 @dataclass
@@ -15,3 +16,10 @@ class Package:
 class Project:
 	root: Path
 	packages: list[Package] = field(default_factory=list)
+
+
+@dataclass
+class FormatIssue:
+	level: Literal["warning", "error"]
+	message: str
+	line: int | None = None
