@@ -23,3 +23,11 @@ class FormatIssue:
 	level: Literal["warning", "error"]
 	message: str
 	line: int | None = None
+
+
+@dataclass
+class Requirement:
+	id: str
+	description: str
+	line_number: int | None = None
+	category: str | None = None
