@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.4] - 2026-08-14
+
+### Added
+- Added parse to reqtrace cli (usage: reqtrace parse)
+- Implemented parsing for requirements file (usage: reqtrace parse requirements FILE)
+
 ## [0.0.3] - 2026-08-09
 
 ### Added
