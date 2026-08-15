@@ -61,6 +61,7 @@ def _parse_requirements(file: Path):
 		for req in valid_reqs:
 			click.echo(f"\t{req.id}: {req.description}\n")
 
+
 @parse.command()
 def pytest():
 	"""Extract traceability from pytest testcases."""
