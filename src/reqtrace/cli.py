@@ -31,10 +31,12 @@ def scan(dir: Path, show_all: bool, req_paths_only: bool):
 	else:
 		_print_scan_report(dir, packages)
 
+
 def _print_requirements(packages: list[Package]):
 	for pkg in packages:
 		for requirement in pkg.requirements_md:
 			click.echo(requirement.resolve())
+
 
 def _print_scan_report(dir: Path, packages):
 	click.echo(f"Showing results for directories under {dir.resolve()}")
@@ -73,8 +75,12 @@ def parse():
 @click.argument("file", type=click.Path(exists=True, file_okay=True, dir_okay=False, readable=True, path_type=Path))
 def requirements(file: Path):
 	"""Extract requirements from REQUIREMENTS.md files."""
-	parsed_reqs = parse_requirements_file(file)
+	_parse_requirements(file)
 
+
+def _parse_requirements(file: Path):
+	parsed_reqs = parse_requirements_file(file)
+	
 	has_errors = any(issue.level == "error" for issue in parsed_reqs.issues)
 
 	if parsed_reqs.issues:
@@ -82,7 +88,7 @@ def requirements(file: Path):
 
 		for issue in parsed_reqs.issues:
 			click.secho(f"{issue.level.upper()}" + f"\n{issue.message}\n",
-			   fg= "red" if issue.level == "error" else "yellow")
+				fg= "red" if issue.level == "error" else "yellow")
 
 		if has_errors:
 			raise click.exceptions.Exit(1)
@@ -94,7 +100,6 @@ def requirements(file: Path):
 
 		for req in valid_reqs:
 			click.echo(f"\t{req.id}: {req.description}\n")
-
 
 @parse.command()
 def pytest():
