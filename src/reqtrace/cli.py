@@ -2,7 +2,7 @@
 import click
 from pathlib import Path
 
-from .discover import find_packages
+from .discover import find_packages, Package
 from .parse import parse_requirements_file, filter_valid_requirements
 
 @click.group()
@@ -14,7 +14,8 @@ def cli():
 @cli.command()
 @click.option('--dir', type=click.Path(exists=True, file_okay=False, path_type=Path), default='.')
 @click.option('--all', 'show_all', is_flag=True, help="Include packages without requirements.", default=False)
-def scan(dir: Path, show_all: bool):
+@click.option('--requirements', 'req_paths_only', is_flag=True)
+def scan(dir: Path, show_all: bool, req_paths_only: bool):
 	"""Search directory for paths to requirements, tests, and package descriptions"""
 	project = find_packages(dir)
 
@@ -24,10 +25,16 @@ def scan(dir: Path, show_all: bool):
 		if show_all
 		else [pkg for pkg in project.packages if pkg.requirements_md]
 	)
+	
+	if req_paths_only:
+		_print_requirements(packages)
+	else:
+		_print_scan_report(dir, packages)
 
-	_print_scan_report(dir, packages)
-
-
+def _print_requirements(packages: list[Package]):
+	for pkg in packages:
+		for requirement in pkg.requirements_md:
+			click.echo(requirement.resolve())
 
 def _print_scan_report(dir: Path, packages):
 	click.echo(f"Showing results for directories under {dir.resolve()}")
