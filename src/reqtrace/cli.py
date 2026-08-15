@@ -18,16 +18,23 @@ def scan(dir: Path, show_all: bool):
 	"""Search directory for paths to requirements, tests, and package descriptions"""
 	project = find_packages(dir)
 
-	click.echo(f"Showing results for directories under {project.root.resolve()}")
+	# Filter package list based on whether requirements are present
+	packages = (
+		project.packages
+		if show_all
+		else [pkg for pkg in project.packages if pkg.requirements_md]
+	)
 
-	if not project.packages:
-		click.echo("  No package.xml files found.")
+	_print_scan_report(dir, packages)
+
+
+
+def _print_scan_report(dir: Path, packages):
+	click.echo(f"Showing results for directories under {dir.resolve()}")
+
+	if not packages:
+		click.echo("No package.xml files found.", err=True)
 		return
-
-	# Filter package list to only those containing requirements
-	packages = project.packages if show_all else [
-		pkg for pkg in project.packages if pkg.requirements_md
-	]
 
 	if not packages:
 		click.echo("  No packages with REQUIREMENTS.md files found.")
