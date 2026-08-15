@@ -72,10 +72,21 @@ def parse():
 
 
 @parse.command()
-@click.argument("file", type=click.Path(exists=True, file_okay=True, dir_okay=False, readable=True, path_type=Path))
+@click.argument("file", type=click.Path(exists=True, file_okay=True, dir_okay=False, readable=True, path_type=Path, allow_dash=True))
 def requirements(file: Path):
 	"""Extract requirements from REQUIREMENTS.md files."""
-	_parse_requirements(file)
+
+	if file == Path("-"):
+		files = (
+			Path(line.strip())
+			for line in click.get_text_stream("stdin")
+			if line.strip()
+		)
+	else:
+		files = [file]
+
+	for file in files:
+		_parse_requirements(file)
 
 
 def _parse_requirements(file: Path):
