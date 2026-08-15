@@ -95,5 +95,6 @@ def test(file: Path):
 			"pytest collection failed"
 		)
 
+	click.echo(f"File: {file}\n")
 	click.echo(plugin.report())
 

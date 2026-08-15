@@ -39,10 +39,11 @@ class ReqtracePlugin:
 		]
 
 		for req_id in sorted(requirements):
-			lines.append(f"Requirement: {req_id}")
+			lines.append(f"Requirement ID: {req_id}")
 
 			for test_id in requirements[req_id]:
-				lines.append(f"\t- {test_id}")
+				test_name = test_id.split("::")[-1]
+				lines.append(f"\t- {test_name}")
 
 			lines.append("")
 
