@@ -26,6 +26,9 @@ license-files = ["LICEN[CS]E*"]
 [project.scripts]
 reqtrace = "reqtrace.cli:cli"
 
+[project.entry-points.pytest11]
+reqtrace = "reqtrace.pytest_plugin"
+
 [project.urls]
 Homepage = "https://github.com/daiawi/reqtrace-cli"
 Issues = "https://github.com/daiawi/reqtrace-cli/issues"
