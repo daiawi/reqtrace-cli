@@ -2,7 +2,7 @@
 from pathlib import Path
 
 import click
-import pytest as pytest_runner
+import pytest
 
 from .parse import filter_valid_requirements, parse_requirements_file
 from .pytest_plugin import ReqtracePlugin
@@ -65,7 +65,7 @@ def _parse_requirements(file: Path):
 			click.echo(f"\t{req.id}: {req.description}\n")
 
 
-@parse.command()
+@parse.command(name="pytest")
 @click.argument("file", 
 	type=click.Path(
 		exists=True, 
@@ -76,11 +76,11 @@ def _parse_requirements(file: Path):
 		allow_dash=True
 	)
 )
-def test(file: Path):
+def parse_pytest(file: Path):
 	"""Extract traceability from pytest testcases."""
 	plugin = ReqtracePlugin()
 
-	exit_code = pytest_runner.main(
+	exit_code = pytest.main(
 		[
 			"--collect-only",
 			"-p",
