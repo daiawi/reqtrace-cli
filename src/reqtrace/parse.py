@@ -1,7 +1,9 @@
 # src/reqtrace/parse.py
 from collections import defaultdict
-from .models import FormatIssue, Requirement, ParsedRequirements
 from pathlib import Path
+
+from .models import FormatIssue, ParsedRequirements, Requirement
+
 
 def parse_requirements_file(file: Path) -> ParsedRequirements:
 	lines = file.read_text().splitlines()

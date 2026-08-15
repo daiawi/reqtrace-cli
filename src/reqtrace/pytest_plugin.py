@@ -1,4 +1,5 @@
 # pytest_plugin.py
+from collections import defaultdict
 
 from .models import TestTrace
 
@@ -23,6 +24,29 @@ class ReqtracePlugin:
 			)
 
 			self.traces.append(trace)
+
+	def report(self) -> str:
+		requirements = defaultdict(list)
+
+		for trace in self.traces:
+			for req_id in trace.req_ids:
+				requirements[req_id].append(trace.test_id)
+
+		lines = [
+			f"Requirements: {len(requirements)}",
+			f"Tests: {len(self.traces)}",
+			"",
+		]
+
+		for req_id in sorted(requirements):
+			lines.append(f"Requirement: {req_id}")
+
+			for test_id in requirements[req_id]:
+				lines.append(f"\t- {test_id}")
+
+			lines.append("")
+
+		return "\n".join(lines)
 
 plugin = ReqtracePlugin()
 
