@@ -1,7 +1,9 @@
 # src/reqtrace/discover.py
 
-from .models import Package, Project
 from pathlib import Path
+
+from .models import Package, Project
+
 
 def find_packages(root: Path) -> Project:
 	packages = []

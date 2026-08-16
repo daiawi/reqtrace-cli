@@ -4,18 +4,17 @@ from pathlib import Path
 import click
 import pytest
 
-from .parse import filter_valid_requirements, parse_requirements_file
-from .pytest_plugin import ReqtracePlugin
+from ..core.parse import filter_valid_requirements, parse_requirements_file
+from ..pytest_plugin import ReqtracePlugin
 
 
 @click.group()
 def parse():
 	"""Validate formatting of requirements and test traceability."""
-	pass
 
 
 @parse.command()
-@click.argument("file", 
+@click.argument("input_file", 
 	type=click.Path(
 		exists=True, 
 		file_okay=True, 
@@ -25,17 +24,17 @@ def parse():
 		allow_dash=True
 	)
 )
-def requirements(file: Path):
+def requirements(input_file: Path):
 	"""Extract requirements from REQUIREMENTS.md files."""
 
-	if file == Path("-"):
+	if input_file == Path("-"):
 		files = (
 			Path(line.strip())
 			for line in click.get_text_stream("stdin")
 			if line.strip()
 		)
 	else:
-		files = [file]
+		files = [input_file]
 
 	for file in files:
 		_parse_requirements(file)
@@ -47,7 +46,7 @@ def _parse_requirements(file: Path):
 	has_errors = any(issue.level == "error" for issue in parsed_reqs.issues)
 
 	if parsed_reqs.issues:
-		click.echo(f"!! REQUIREMENTS FILE HAS PROBLEMS !!\n")
+		click.echo("!! REQUIREMENTS FILE HAS PROBLEMS !!\n")
 
 		for issue in parsed_reqs.issues:
 			click.secho(f"{issue.level.upper()}" + f"\n{issue.message}\n",

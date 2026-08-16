@@ -3,7 +3,8 @@ from pathlib import Path
 
 import click
 
-from .discover import find_packages, Package
+from ..core.discover import Package, find_packages
+
 
 @click.command()
 @click.option('--dir', 
@@ -21,7 +22,8 @@ from .discover import find_packages, Package
 )
 @click.option('--requirements', 
 	'req_paths_only', 
-	is_flag=True
+	is_flag=True,
+	help="Print only paths to requirements files"
 	)
 def scan(dir: Path, show_all: bool, req_paths_only: bool):
 	"""Search directory for paths to requirements, tests, and package descriptions"""

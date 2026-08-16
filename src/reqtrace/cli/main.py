@@ -1,14 +1,13 @@
 # src/reqtrace/cli.py
 import click
 
-from .cli_scan import scan
-from .cli_parse import parse
+from .parse import parse
+from .scan import scan
 
 
 @click.group()
 def cli():
 	"""reqtrace: build requirements-to-tests traceability report"""
-	pass
 
 
 cli.add_command(scan)
