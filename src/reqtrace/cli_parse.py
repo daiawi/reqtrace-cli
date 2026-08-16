@@ -2,8 +2,11 @@
 from pathlib import Path
 
 import click
+import pytest
 
-from .parse import parse_requirements_file, filter_valid_requirements
+from .parse import filter_valid_requirements, parse_requirements_file
+from .pytest_plugin import ReqtracePlugin
+
 
 @click.group()
 def parse():
@@ -62,7 +65,36 @@ def _parse_requirements(file: Path):
 			click.echo(f"\t{req.id}: {req.description}\n")
 
 
-@parse.command()
-def pytest():
+@parse.command(name="pytest")
+@click.argument("file", 
+	type=click.Path(
+		exists=True, 
+		file_okay=True, 
+		dir_okay=False, 
+		readable=True, 
+		path_type=Path, 
+		allow_dash=True
+	)
+)
+def parse_pytest(file: Path):
 	"""Extract traceability from pytest testcases."""
-	pass
+	plugin = ReqtracePlugin()
+
+	exit_code = pytest.main(
+		[
+			"--collect-only",
+			"-p",
+        	"no:terminal",
+			str(file),
+		],
+		plugins=[plugin]
+	)
+
+	if exit_code != 0:
+		raise click.ClickException(
+			"pytest collection failed"
+		)
+
+	click.echo(f"File: {file}\n")
+	click.echo(plugin.report())
+

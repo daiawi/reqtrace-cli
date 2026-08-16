@@ -37,3 +37,9 @@ class Requirement:
 class ParsedRequirements:
 	requirements: list[Requirement] | None
 	issues: list[FormatIssue]
+
+
+@dataclass
+class TestTrace:
+	test_id: str
+	req_ids: list[str]

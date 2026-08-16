@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.6] - 2026-08-15
+
+### Added
+- Pytest plugin to capture [custom markers](https://docs.pytest.org/en/stable/example/markers.html) for requirements tagging
+	- Usage: `@pytest.mark.req("REQ-ID")`
+- Functionality for `reqtrace parse pytest` which runs `pytest --collect-all` under the hood to collect tests
+	- This then stores tests with `req` markers and provides a report of tests per unique marker.
+
 ## [0.0.5] - 2026-08-14
 
 ### Added
