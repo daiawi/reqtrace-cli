@@ -14,7 +14,7 @@ def parse():
 
 
 @parse.command()
-@click.argument("file", 
+@click.argument("input_file", 
 	type=click.Path(
 		exists=True, 
 		file_okay=True, 
