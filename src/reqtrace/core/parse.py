@@ -30,7 +30,7 @@ def check_file_format(file_name: str, lines: list[str]) -> list[FormatIssue]:
 		issues.append(FormatIssue("error", f"{file_name} must be named REQUIREMENTS.md to be found"))
 
 	if not lines:
-		issues.append(FormatIssue("error", f"Provided file is empty and/or contains no text"))
+		issues.append(FormatIssue("error", "Provided file is empty and/or contains no text"))
 		return issues
 
 	if not lines[0].startswith("# "):
