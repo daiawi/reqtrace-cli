@@ -24,7 +24,7 @@ license = "Apache-2.0"
 license-files = ["LICEN[CS]E*"]
 
 [project.scripts]
-reqtrace = "reqtrace.cli:cli"
+reqtrace = "reqtrace.cli.main:cli"
 
 [project.entry-points.pytest11]
 reqtrace = "reqtrace.pytest_plugin"

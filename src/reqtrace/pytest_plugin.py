@@ -1,7 +1,7 @@
 # pytest_plugin.py
 from collections import defaultdict
 
-from .models import TestTrace
+from .core.models import TestTrace
 
 
 class ReqtracePlugin:

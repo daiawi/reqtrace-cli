@@ -4,8 +4,8 @@ from pathlib import Path
 import click
 import pytest
 
-from .parse import filter_valid_requirements, parse_requirements_file
-from .pytest_plugin import ReqtracePlugin
+from ..core.parse import filter_valid_requirements, parse_requirements_file
+from ..pytest_plugin import ReqtracePlugin
 
 
 @click.group()

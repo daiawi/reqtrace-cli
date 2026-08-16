@@ -1,8 +1,8 @@
 # src/reqtrace/cli.py
 import click
 
-from .cli_scan import scan
-from .cli_parse import parse
+from .scan import scan
+from .parse import parse
 
 
 @click.group()

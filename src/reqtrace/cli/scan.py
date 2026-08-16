@@ -3,7 +3,7 @@ from pathlib import Path
 
 import click
 
-from .discover import find_packages, Package
+from ..core.discover import find_packages, Package
 
 @click.command()
 @click.option('--dir', 
