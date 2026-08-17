@@ -2,10 +2,10 @@
 
 from pathlib import Path
 
-from .models import Package, Project
+from .models import Package
 
 
-def find_packages(root: Path) -> Project:
+def find_packages(root: Path) -> list[Package]:
 	packages = []
 	for package_xml in root.rglob("package.xml"):
 		pkg_root = package_xml.parent
@@ -20,7 +20,7 @@ def find_packages(root: Path) -> Project:
 			tests=tests
 		))
 
-	return Project(root=root, packages=packages)
+	return packages
 
 def find_tests(root: Path) -> list[Path]:
 	return list(root.rglob("test_*.py")) + list(root.rglob("*_test.py"))

@@ -15,12 +15,6 @@ class Package:
 
 
 @dataclass
-class Project:
-	root: Path
-	packages: list[Package] = field(default_factory=list)
-
-
-@dataclass
 class FormatIssue:
 	level: Literal["warning", "error"]
 	message: str

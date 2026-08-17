@@ -27,13 +27,13 @@ from ..core.discover import Package, find_packages
 	)
 def scan(dir: Path, show_all: bool, req_paths_only: bool):
 	"""Search directory for paths to requirements, tests, and package descriptions"""
-	project = find_packages(dir)
+	all_packages = find_packages(dir)
 
 	# Filter package list based on whether requirements are present
 	packages = (
-		project.packages
+		all_packages
 		if show_all
-		else [pkg for pkg in project.packages if pkg.requirements_md]
+		else [pkg for pkg in all_packages if pkg.requirements_md]
 	)
 	
 	if req_paths_only:

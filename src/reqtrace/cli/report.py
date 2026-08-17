@@ -2,7 +2,7 @@ from pathlib import Path
 
 import click
 
-from ..core.discover import Package, find_packages
+from ..core.discover import find_packages
 from .parse import _collect_pytest, _parse_requirements
 
 
@@ -16,9 +16,9 @@ from .parse import _collect_pytest, _parse_requirements
 )
 def report(dir):
 	"""Creates a requirements-to-tests traceability report."""
-	project = find_packages(dir)
+	all_packages = find_packages(dir)
 
-	packages = [pkg for pkg in project.packages if pkg.requirements_md]
+	packages = [pkg for pkg in all_packages if pkg.requirements_md]
 
 	# Stage 1: Collect all requirements / test traces
 	all_reqs = []
