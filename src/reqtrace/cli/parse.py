@@ -4,6 +4,7 @@ from pathlib import Path
 import click
 import pytest
 
+from ..core.models import Requirement
 from ..core.parse import filter_valid_requirements, parse_requirements_file
 from ..pytest_plugin import ReqtracePlugin
 
@@ -37,10 +38,16 @@ def requirements(input_file: Path):
 		files = [input_file]
 
 	for file in files:
-		_parse_requirements(file)
+		valid_reqs = _parse_requirements(file)
+		
+		if valid_reqs:
+			click.echo(f"Found {len(valid_reqs)} valid requirements:\n")
+
+			for req in valid_reqs:
+				click.echo(f"\t{req.id}: {req.description}\n")
 
 
-def _parse_requirements(file: Path):
+def _parse_requirements(file: Path) -> list[Requirement]:
 	parsed_reqs = parse_requirements_file(file)
 	
 	has_errors = any(issue.level == "error" for issue in parsed_reqs.issues)
@@ -55,14 +62,10 @@ def _parse_requirements(file: Path):
 		if has_errors:
 			raise click.exceptions.Exit(1)
 
-	valid_reqs = filter_valid_requirements(parsed_reqs)
+	valid_reqs = []
+	valid_reqs.extend(filter_valid_requirements(parsed_reqs))
 
-	if valid_reqs:
-		click.echo(f"Found {len(valid_reqs)} valid requirements:\n")
-
-		for req in valid_reqs:
-			click.echo(f"\t{req.id}: {req.description}\n")
-
+	return valid_reqs
 
 @parse.command(name="pytest")
 @click.argument("file", 
