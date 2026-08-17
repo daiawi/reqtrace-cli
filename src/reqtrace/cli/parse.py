@@ -1,10 +1,11 @@
 # src/reqtrace/cli_parse.py
+from collections import defaultdict
 from pathlib import Path
 
 import click
 import pytest
 
-from ..core.models import Requirement
+from ..core.models import Requirement, TestTrace
 from ..core.parse import filter_valid_requirements, parse_requirements_file
 from ..pytest_plugin import ReqtracePlugin
 
@@ -39,7 +40,7 @@ def requirements(input_file: Path):
 
 	for file in files:
 		valid_reqs = _parse_requirements(file)
-		
+
 		if valid_reqs:
 			click.echo(f"Found {len(valid_reqs)} valid requirements:\n")
 
@@ -67,6 +68,7 @@ def _parse_requirements(file: Path) -> list[Requirement]:
 
 	return valid_reqs
 
+
 @parse.command(name="pytest")
 @click.argument("file", 
 	type=click.Path(
@@ -80,6 +82,15 @@ def _parse_requirements(file: Path) -> list[Requirement]:
 )
 def parse_pytest(file: Path):
 	"""Extract traceability from pytest testcases."""
+	traces = _collect_pytest(file)
+	report = _traceability_report(traces)
+
+
+	click.echo(f"File: {file}\n")
+	click.echo(report)
+
+
+def _collect_pytest(file: Path) -> list[TestTrace]:
 	plugin = ReqtracePlugin()
 
 	exit_code = pytest.main(
@@ -97,6 +108,29 @@ def parse_pytest(file: Path):
 			"pytest collection failed"
 		)
 
-	click.echo(f"File: {file}\n")
-	click.echo(plugin.report())
+	return plugin.traces
 
+
+def _traceability_report(traces: list[TestTrace]) -> str:
+	requirements = defaultdict(list)
+
+	for trace in traces:
+		for req_id in trace.req_ids:
+			requirements[req_id].append(trace.test_id)
+
+	lines = [
+		f"Requirements: {len(requirements)}",
+		f"Tests: {len(traces)}",
+		"",
+	]
+
+	for req_id in sorted(requirements):
+		lines.append(f"Requirement ID: {req_id}")
+
+		for test_id in requirements[req_id]:
+			test_name = test_id.split("::")[-1]
+			lines.append(f"\t- {test_name}")
+
+		lines.append("")
+
+	return "\n".join(lines)
