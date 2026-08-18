@@ -6,7 +6,13 @@ from pathlib import Path
 import pytest
 
 from ..pytest_plugin import ReqtracePlugin
-from .models import FormatIssue, ParsedRequirements, Requirement, TestTrace, SoftwareInfo
+from .models import (
+	FormatIssue,
+	ParsedRequirements,
+	Requirement,
+	SoftwareInfo,
+	TestTrace,
+)
 
 
 def parse_requirements_file(file: Path) -> ParsedRequirements:

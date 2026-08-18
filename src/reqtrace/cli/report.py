@@ -3,7 +3,8 @@ from pathlib import Path
 import click
 
 from ..core.discover import find_packages
-from ..core.models import RequirementTrace
+from ..core.models import TraceReport, reports_to_json
+from ..core.parse import parse_package_xml
 from ..core.trace import extract_req_traces
 
 
@@ -15,20 +16,37 @@ from ..core.trace import extract_req_traces
 		path_type=Path), 
 	default='.'
 )
-def report(dir):
+@click.option(
+	'--json',
+	"json_output",
+	is_flag=True,
+	default=False
+)
+def report(dir, json_output):
 	"""Creates a requirements-to-tests traceability report."""
 	all_packages = find_packages(dir)
 
 	packages = [pkg for pkg in all_packages if pkg.requirements_md]
 
-	# Stage 1: Collect all requirements / test traces
+	pkg_reports = []
 	for pkg in packages:
+		software = parse_package_xml(pkg.package_xml)
 		reqtraces = extract_req_traces(pkg)
-		click.echo(f"Results for package: {pkg.root}")
-		click.echo(_traceability_report(reqtraces))
+
+		report = TraceReport(software=software, requirements=reqtraces)
+		pkg_reports.append(report)
+
+	if json_output:
+		click.echo(reports_to_json(pkg_reports))
+	else:
+		for report in pkg_reports:
+			click.echo(_traceability_report(report))
+			
 
 
-def _traceability_report(traces: list[RequirementTrace]) -> str:
+def _traceability_report(report: TraceReport) -> str:
+	traces = report.requirements
+
 	test_ids = {
 		test_id
 		for trace in traces
@@ -36,6 +54,9 @@ def _traceability_report(traces: list[RequirementTrace]) -> str:
 	}
 
 	lines = [
+		f"Software: {report.software.name}",
+		f"Version: {report.software.version}",
+		"",
 		f"Requirements: {len(traces)}",
 		f"Tests: {len(test_ids)}",
 		"",
