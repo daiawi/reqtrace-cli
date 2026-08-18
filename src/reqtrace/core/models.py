@@ -15,6 +15,11 @@ class Package:
 
 
 @dataclass
+class SoftwareInfo:
+	name: str
+	version: str
+
+@dataclass
 class FormatIssue:
 	level: Literal["warning", "error"]
 	message: str
@@ -63,6 +68,5 @@ class RequirementTrace:
 
 @dataclass
 class TraceReport:
-	software: str
-	version: str
+	software: SoftwareInfo
 	requirements: list[RequirementTrace]
