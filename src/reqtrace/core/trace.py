@@ -17,7 +17,7 @@ def extract_req_trace(package: Package) -> list[RequirementTrace]:
 	requirements = []
 	for file in package.requirements_md:
 		parsed_reqs = parse_requirements_file(file)
-		requirements.extend(parsed_reqs.valid_requirements)
+		requirements.extend(parsed_reqs.valid_reqs)
 
 	pkg_test_traces = []
 	for file in package.tests:

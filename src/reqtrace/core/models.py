@@ -35,7 +35,7 @@ class ParsedRequirements:
 	issues: list[FormatIssue]
 
 	@property
-	def valid_requirements(self) -> list[Requirement]:
+	def valid_reqs(self) -> list[Requirement]:
 		if self.requirements is None:
 			return []
 

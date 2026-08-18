@@ -40,7 +40,7 @@ def requirements(input_file: Path):
 		parsed_reqs = parse_requirements_file(file)
 		_display_parsed_req_issues(parsed_reqs)
 
-		valid_reqs = parsed_reqs.valid_requirements
+		valid_reqs = parsed_reqs.valid_reqs
 
 		if valid_reqs:
 			click.echo(f"Found {len(valid_reqs)} valid requirements:\n")
