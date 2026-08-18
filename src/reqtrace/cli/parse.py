@@ -103,3 +103,8 @@ def _traceability_report(traces: list[TestTrace]) -> str:
 		lines.append("")
 
 	return "\n".join(lines)
+
+
+@parse.command(name="package")
+def parse_package(file: Path):
+	"""Extract software information from package"""
