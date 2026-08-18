@@ -13,7 +13,7 @@ def build_requirement_test_map(traces: list[TestTrace]):
 
 	return requirements
 
-def extract_req_trace(package: Package) -> list[RequirementTrace]:
+def extract_req_traces(package: Package) -> list[RequirementTrace]:
 	requirements = []
 	for file in package.requirements_md:
 		parsed_reqs = parse_requirements_file(file)
