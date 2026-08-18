@@ -2,12 +2,10 @@
 from pathlib import Path
 
 import click
-import pytest
 
 from ..core.models import ParsedRequirements, TestTrace
-from ..core.parse import parse_requirements_file
+from ..core.parse import collect_pytest, parse_requirements_file
 from ..core.trace import build_requirement_test_map
-from ..pytest_plugin import ReqtracePlugin
 
 
 @click.group()
@@ -78,33 +76,12 @@ def _display_parsed_req_issues(parsed_reqs: ParsedRequirements):
 )
 def parse_pytest(file: Path):
 	"""Extract traceability from pytest testcases."""
-	traces = _collect_pytest(file)
+	traces = collect_pytest(file)
 	report = _traceability_report(traces)
 
 
 	click.echo(f"File: {file}\n")
 	click.echo(report)
-
-
-def _collect_pytest(file: Path) -> list[TestTrace]:
-	plugin = ReqtracePlugin()
-
-	exit_code = pytest.main(
-		[
-			"--collect-only",
-			"-p",
-        	"no:terminal",
-			str(file),
-		],
-		plugins=[plugin]
-	)
-
-	if exit_code != 0:
-		raise click.ClickException(
-			"pytest collection failed"
-		)
-
-	return plugin.traces
 
 
 def _traceability_report(traces: list[TestTrace]) -> str:
