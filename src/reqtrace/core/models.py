@@ -39,3 +39,17 @@ class ParsedRequirements:
 class TestTrace:
 	test_id: str
 	req_ids: list[str]
+
+
+@dataclass
+class RequirementTrace:
+	req_id: str
+	description: str
+	test_ids: list[str]
+
+
+@dataclass
+class TraceReport:
+	software: str
+	version: str
+	requirements: list[RequirementTrace]

@@ -3,6 +3,7 @@ from pathlib import Path
 import click
 
 from ..core.discover import find_packages
+from ..core.trace import trace_requirement
 from .parse import _collect_pytest, _parse_requirements
 
 
@@ -33,6 +34,7 @@ def report(dir):
 			traces = _collect_pytest(file)
 			all_test_traces.extend(traces)
 
-	print("Number of Requirements", len(all_reqs))
-	print("Number of tests", len(all_test_traces))
-	
+	for requirement in all_reqs:
+		req_trace = trace_requirement(requirement, all_test_traces)
+		print(req_trace)
+		print("\n")
