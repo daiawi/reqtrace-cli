@@ -1,11 +1,10 @@
 # src/reqtrace/cli_parse.py
-from collections import defaultdict
 from pathlib import Path
 
 import click
 import pytest
 
-from ..core.models import Requirement, TestTrace
+from ..core.models import Requirement, TestTrace, ParsedRequirements
 from ..core.parse import filter_valid_requirements, parse_requirements_file
 from ..core.trace import build_requirement_test_map
 from ..pytest_plugin import ReqtracePlugin
@@ -40,7 +39,10 @@ def requirements(input_file: Path):
 		files = [input_file]
 
 	for file in files:
-		valid_reqs = _parse_requirements(file)
+		parsed_reqs = parse_requirements_file(file)
+		_display_parsed_req_issues(parsed_reqs)
+
+		valid_reqs = filter_valid_requirements(parsed_reqs)
 
 		if valid_reqs:
 			click.echo(f"Found {len(valid_reqs)} valid requirements:\n")
@@ -49,9 +51,7 @@ def requirements(input_file: Path):
 				click.echo(f"\t{req.id}: {req.description}\n")
 
 
-def _parse_requirements(file: Path) -> list[Requirement]:
-	parsed_reqs = parse_requirements_file(file)
-	
+def _display_parsed_req_issues(parsed_reqs: ParsedRequirements):
 	has_errors = any(issue.level == "error" for issue in parsed_reqs.issues)
 
 	if parsed_reqs.issues:
@@ -63,11 +63,6 @@ def _parse_requirements(file: Path) -> list[Requirement]:
 
 		if has_errors:
 			raise click.exceptions.Exit(1)
-
-	valid_reqs = []
-	valid_reqs.extend(filter_valid_requirements(parsed_reqs))
-
-	return valid_reqs
 
 
 @parse.command(name="pytest")
