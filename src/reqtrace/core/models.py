@@ -1,10 +1,11 @@
 # src/reqtrace/models.py
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Literal
 
+import json
 
 @dataclass
 class Package:
@@ -13,6 +14,11 @@ class Package:
 	requirements_md: list[Path] = field(default_factory=list)
 	tests: list[Path] = field(default_factory=list)
 
+
+@dataclass
+class SoftwareInfo:
+	name: str
+	version: str
 
 @dataclass
 class FormatIssue:
@@ -63,6 +69,18 @@ class RequirementTrace:
 
 @dataclass
 class TraceReport:
-	software: str
-	version: str
+	software: SoftwareInfo
 	requirements: list[RequirementTrace]
+
+	def to_dict(self):
+		return asdict(self)
+
+	def to_json(self):
+		return json.dumps(self.to_dict(), indent=2)
+
+
+def reports_to_json(reports: list[TraceReport]) -> str:
+    return json.dumps(
+        [report.to_dict() for report in reports],
+        indent=2,
+    )

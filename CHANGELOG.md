@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.0.8] - 2026-08-18
+
+### Added
+- New `parse package` which reads package.xml files and extracts software name/version
+- Added `--json` option to `report` which formats the output as json
+
+### Changed
+- Updated `report` output to include software name/version of each package 
+
+
 ## [0.0.7] - 2026-08-18
 
 ### Added
@@ -14,6 +24,7 @@
 - Functionality for `reqtrace parse pytest` which runs `pytest --collect-all` under the hood to collect tests
 	- This then stores tests with `req` markers and provides a report of tests per unique marker.
 
+
 ## [0.0.5] - 2026-08-14
 
 ### Added
@@ -26,11 +37,13 @@
 - Abstracted scan and parse logic to helper functions
 - Scan no longer shows packages without requirements by default (see: `-all`)
 
+
 ## [0.0.4] - 2026-08-14
 
 ### Added
 - Added parse to reqtrace cli (usage: `reqtrace parse`)
 - Implemented parsing for requirements file (usage: `reqtrace parse requirements FILE`)
+
 
 ## [0.0.3] - 2026-08-09
 
@@ -40,6 +53,7 @@
 
 ### Changed
 - Updated `cli scan` command to show results of package discovery
+
 
 ## [0.0.2] - 2026-08-09
 

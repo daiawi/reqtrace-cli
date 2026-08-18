@@ -1,11 +1,18 @@
 # src/reqtrace/parse.py
+import xml.etree.ElementTree as ET
 from collections import defaultdict
 from pathlib import Path
 
 import pytest
 
 from ..pytest_plugin import ReqtracePlugin
-from .models import FormatIssue, ParsedRequirements, Requirement, TestTrace
+from .models import (
+	FormatIssue,
+	ParsedRequirements,
+	Requirement,
+	SoftwareInfo,
+	TestTrace,
+)
 
 
 def parse_requirements_file(file: Path) -> ParsedRequirements:
@@ -141,3 +148,13 @@ def collect_pytest(file: Path) -> list[TestTrace]:
 		raise RuntimeError(f"Pytest collection failed for {file}")	
 
 	return plugin.traces
+
+
+def parse_package_xml(file: Path) -> SoftwareInfo:
+	tree = ET.parse(file)
+	root = tree.getroot()
+
+	name = root.findtext("name", "")
+	version = root.findtext("version", "")
+
+	return SoftwareInfo(name=name, version=version)

@@ -4,7 +4,7 @@ from pathlib import Path
 import click
 
 from ..core.models import ParsedRequirements, TestTrace
-from ..core.parse import collect_pytest, parse_requirements_file
+from ..core.parse import collect_pytest, parse_package_xml, parse_requirements_file
 from ..core.trace import build_requirement_test_map
 
 
@@ -103,3 +103,23 @@ def _traceability_report(traces: list[TestTrace]) -> str:
 		lines.append("")
 
 	return "\n".join(lines)
+
+
+@parse.command(name="package")
+@click.argument("file", 
+	type=click.Path(
+		exists=True, 
+		file_okay=True, 
+		dir_okay=False, 
+		readable=True, 
+		path_type=Path, 
+		allow_dash=True
+	)
+)
+def parse_package(file: Path):
+	"""Extract software information from package"""
+	software = parse_package_xml(file)
+
+	click.echo(f"File: {file}\n")
+	click.echo(f"Software Name: {software.name}")
+	click.echo(f"Version: {software.version}")
