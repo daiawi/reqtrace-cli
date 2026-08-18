@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from .models import Requirement, RequirementTrace, TestTrace
 
 
@@ -11,3 +13,12 @@ def trace_requirement(requirement: Requirement, tests: list[TestTrace]) -> Requi
     ]
 
 	return RequirementTrace(req_id=id, description=description, test_ids=test_ids)
+
+def build_requirement_test_map(traces: list[TestTrace]):
+	requirements = defaultdict(list)
+
+	for trace in traces:
+		for req_id in trace.req_ids:
+			requirements[req_id].append(trace.test_id)
+
+	return requirements

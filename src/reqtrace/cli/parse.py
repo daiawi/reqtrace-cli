@@ -7,6 +7,7 @@ import pytest
 
 from ..core.models import Requirement, TestTrace
 from ..core.parse import filter_valid_requirements, parse_requirements_file
+from ..core.trace import build_requirement_test_map
 from ..pytest_plugin import ReqtracePlugin
 
 
@@ -112,11 +113,7 @@ def _collect_pytest(file: Path) -> list[TestTrace]:
 
 
 def _traceability_report(traces: list[TestTrace]) -> str:
-	requirements = defaultdict(list)
-
-	for trace in traces:
-		for req_id in trace.req_ids:
-			requirements[req_id].append(trace.test_id)
+	requirements = build_requirement_test_map(traces)
 
 	lines = [
 		f"Requirements: {len(requirements)}",
