@@ -118,4 +118,8 @@ def _traceability_report(traces: list[TestTrace]) -> str:
 )
 def parse_package(file: Path):
 	"""Extract software information from package"""
-	parse_package_xml(file)
+	software = parse_package_xml(file)
+
+	click.echo(f"File: {file}\n")
+	click.echo(f"Software Name: {software.name}")
+	click.echo(f"Version: {software.version}")
