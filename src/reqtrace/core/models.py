@@ -34,6 +34,19 @@ class ParsedRequirements:
 	requirements: list[Requirement] | None
 	issues: list[FormatIssue]
 
+	@property
+	def valid_requirements(self) -> list[Requirement]:
+		if self.requirements is None:
+			return []
+
+		invalid_ids = {
+			issue.req_id
+			for issue in self.issues
+			if issue.req_id is not None
+		}
+
+		return [req for req in self.requirements if req.id not in invalid_ids]
+
 
 @dataclass
 class TestTrace:

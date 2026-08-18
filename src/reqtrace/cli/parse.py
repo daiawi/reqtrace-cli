@@ -4,8 +4,8 @@ from pathlib import Path
 import click
 import pytest
 
-from ..core.models import Requirement, TestTrace, ParsedRequirements
-from ..core.parse import filter_valid_requirements, parse_requirements_file
+from ..core.models import ParsedRequirements, TestTrace
+from ..core.parse import parse_requirements_file
 from ..core.trace import build_requirement_test_map
 from ..pytest_plugin import ReqtracePlugin
 
@@ -42,7 +42,7 @@ def requirements(input_file: Path):
 		parsed_reqs = parse_requirements_file(file)
 		_display_parsed_req_issues(parsed_reqs)
 
-		valid_reqs = filter_valid_requirements(parsed_reqs)
+		valid_reqs = parsed_reqs.valid_requirements
 
 		if valid_reqs:
 			click.echo(f"Found {len(valid_reqs)} valid requirements:\n")

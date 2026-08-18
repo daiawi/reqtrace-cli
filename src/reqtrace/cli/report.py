@@ -4,7 +4,7 @@ import click
 
 from ..core.discover import find_packages
 from ..core.models import Package, RequirementTrace
-from ..core.parse import filter_valid_requirements, parse_requirements_file
+from ..core.parse import parse_requirements_file
 from ..core.trace import build_requirement_test_map
 from .parse import _collect_pytest, _display_parsed_req_issues
 
@@ -35,7 +35,7 @@ def _extract_req_trace(package: Package) -> list[RequirementTrace]:
 		parsed_reqs = parse_requirements_file(file)
 		_display_parsed_req_issues(parsed_reqs)
 
-		valid_reqs = filter_valid_requirements(parsed_reqs)
+		valid_reqs = parsed_reqs.valid_requirements
 		requirements.extend(valid_reqs)
 
 	pkg_test_traces = []
@@ -50,7 +50,7 @@ def _extract_req_trace(package: Package) -> list[RequirementTrace]:
 		req_traces.append(RequirementTrace(
 		req_id=req.id,
 		description=req.description,
-		test_ids=req_to_test[req.id]
+		test_ids=req_to_test.get(req.id, [])
 		))
 
 	return req_traces

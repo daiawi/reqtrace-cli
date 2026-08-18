@@ -119,16 +119,3 @@ def check_for_duplicate_requirements(reqs: list[Requirement])-> list[FormatIssue
 			))
 
 	return issues
-
-
-def filter_valid_requirements(parsed_reqs: ParsedRequirements) -> list[Requirement]:
-	bad_reqs = {
-		issue.req_id
-		for issue in parsed_reqs.issues
-		if issue.req_id is not None
-	}
-
-	if parsed_reqs.requirements is None:
-		return []
-
-	return [req for req in parsed_reqs.requirements if req.id not in bad_reqs]
