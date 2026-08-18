@@ -3,7 +3,8 @@ from pathlib import Path
 import click
 
 from ..core.discover import find_packages
-from ..core.trace import trace_requirement
+from ..core.models import Package, RequirementTrace
+from ..core.trace import build_requirement_test_map
 from .parse import _collect_pytest, _parse_requirements
 
 
@@ -22,19 +23,30 @@ def report(dir):
 	packages = [pkg for pkg in all_packages if pkg.requirements_md]
 
 	# Stage 1: Collect all requirements / test traces
-	all_reqs = []
-	all_test_traces =[]
-
 	for pkg in packages:
-		for file in pkg.requirements_md:
-			valid_reqs = _parse_requirements(file)
-			all_reqs.extend(valid_reqs)
+		reqtraces = _extract_req_trace(pkg)
+		print(reqtraces)
 
-		for file in pkg.tests:
-			traces = _collect_pytest(file)
-			all_test_traces.extend(traces)
 
-	for requirement in all_reqs:
-		req_trace = trace_requirement(requirement, all_test_traces)
-		print(req_trace)
-		print("\n")
+def _extract_req_trace(package: Package) -> list[RequirementTrace]:
+	requirements = []
+	for file in package.requirements_md:
+		valid_reqs = _parse_requirements(file)
+		requirements.extend(valid_reqs)
+
+	pkg_test_traces = []
+	for file in package.tests:
+		traces = _collect_pytest(file)
+		pkg_test_traces.extend(traces)
+
+	req_to_test = build_requirement_test_map(pkg_test_traces)
+
+	req_traces = []
+	for req in requirements:
+		req_traces.append(RequirementTrace(
+		req_id=req.id,
+		description=req.description,
+		test_ids=req_to_test[req.id]
+		))
+
+	return req_traces
