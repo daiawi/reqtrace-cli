@@ -2,6 +2,7 @@
 import click
 
 from .parse import parse
+from .report import report
 from .scan import scan
 
 
@@ -12,3 +13,4 @@ def cli():
 
 cli.add_command(scan)
 cli.add_command(parse)
+cli.add_command(report)

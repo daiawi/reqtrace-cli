@@ -2,10 +2,10 @@
 from pathlib import Path
 
 import click
-import pytest
 
-from ..core.parse import filter_valid_requirements, parse_requirements_file
-from ..pytest_plugin import ReqtracePlugin
+from ..core.models import ParsedRequirements, TestTrace
+from ..core.parse import collect_pytest, parse_requirements_file
+from ..core.trace import build_requirement_test_map
 
 
 @click.group()
@@ -37,12 +37,19 @@ def requirements(input_file: Path):
 		files = [input_file]
 
 	for file in files:
-		_parse_requirements(file)
+		parsed_reqs = parse_requirements_file(file)
+		_display_parsed_req_issues(parsed_reqs)
+
+		valid_reqs = parsed_reqs.valid_reqs
+
+		if valid_reqs:
+			click.echo(f"Found {len(valid_reqs)} valid requirements:\n")
+
+			for req in valid_reqs:
+				click.echo(f"\t{req.id}: {req.description}\n")
 
 
-def _parse_requirements(file: Path):
-	parsed_reqs = parse_requirements_file(file)
-	
+def _display_parsed_req_issues(parsed_reqs: ParsedRequirements):
 	has_errors = any(issue.level == "error" for issue in parsed_reqs.issues)
 
 	if parsed_reqs.issues:
@@ -54,14 +61,6 @@ def _parse_requirements(file: Path):
 
 		if has_errors:
 			raise click.exceptions.Exit(1)
-
-	valid_reqs = filter_valid_requirements(parsed_reqs)
-
-	if valid_reqs:
-		click.echo(f"Found {len(valid_reqs)} valid requirements:\n")
-
-		for req in valid_reqs:
-			click.echo(f"\t{req.id}: {req.description}\n")
 
 
 @parse.command(name="pytest")
@@ -77,23 +76,30 @@ def _parse_requirements(file: Path):
 )
 def parse_pytest(file: Path):
 	"""Extract traceability from pytest testcases."""
-	plugin = ReqtracePlugin()
+	traces = collect_pytest(file)
+	report = _traceability_report(traces)
 
-	exit_code = pytest.main(
-		[
-			"--collect-only",
-			"-p",
-        	"no:terminal",
-			str(file),
-		],
-		plugins=[plugin]
-	)
-
-	if exit_code != 0:
-		raise click.ClickException(
-			"pytest collection failed"
-		)
 
 	click.echo(f"File: {file}\n")
-	click.echo(plugin.report())
+	click.echo(report)
 
+
+def _traceability_report(traces: list[TestTrace]) -> str:
+	requirements = build_requirement_test_map(traces)
+
+	lines = [
+		f"Requirements: {len(requirements)}",
+		f"Tests: {len(traces)}",
+		"",
+	]
+
+	for req_id in sorted(requirements):
+		lines.append(f"Requirement ID: {req_id}")
+
+		for test_id in requirements[req_id]:
+			test_name = test_id.split("::")[-1]
+			lines.append(f"\t- {test_name}")
+
+		lines.append("")
+
+	return "\n".join(lines)

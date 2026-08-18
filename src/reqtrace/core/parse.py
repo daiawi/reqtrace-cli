@@ -2,7 +2,10 @@
 from collections import defaultdict
 from pathlib import Path
 
-from .models import FormatIssue, ParsedRequirements, Requirement
+import pytest
+
+from ..pytest_plugin import ReqtracePlugin
+from .models import FormatIssue, ParsedRequirements, Requirement, TestTrace
 
 
 def parse_requirements_file(file: Path) -> ParsedRequirements:
@@ -121,14 +124,20 @@ def check_for_duplicate_requirements(reqs: list[Requirement])-> list[FormatIssue
 	return issues
 
 
-def filter_valid_requirements(parsed_reqs: ParsedRequirements) -> list[Requirement]:
-	bad_reqs = {
-		issue.req_id
-		for issue in parsed_reqs.issues
-		if issue.req_id is not None
-	}
+def collect_pytest(file: Path) -> list[TestTrace]:
+	plugin = ReqtracePlugin()
 
-	if parsed_reqs.requirements is None:
-		return []
+	exit_code = pytest.main(
+		[
+			"--collect-only",
+			"-p",
+        	"no:terminal",
+			str(file),
+		],
+		plugins=[plugin]
+	)
 
-	return [req for req in parsed_reqs.requirements if req.id not in bad_reqs]
+	if exit_code != 0:
+		raise RuntimeError(f"Pytest collection failed for {file}")	
+
+	return plugin.traces
