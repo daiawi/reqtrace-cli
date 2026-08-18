@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.0.7] - 2026-08-18
+
+### Added
+- New `report` command for reqtrace which finds/parses both requirements and tests
+
+
 ## [0.0.6] - 2026-08-15
 
 ### Added
