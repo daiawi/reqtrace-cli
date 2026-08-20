@@ -30,7 +30,7 @@ def report(dir, json_output):
 
 	pkg_reports = []
 	for pkg in packages:
-		software = parse_package_xml(pkg.package_xml)
+		software = parse_package_xml(pkg.package_path)
 		reqtraces = extract_req_traces(pkg)
 
 		report = TraceReport(software=software, requirements=reqtraces)

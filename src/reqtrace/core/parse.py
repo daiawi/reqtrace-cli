@@ -8,6 +8,7 @@ import pytest
 from ..pytest_plugin import ReqtracePlugin
 from .models import (
 	FormatIssue,
+	PackageType,
 	ParsedRequirements,
 	Requirement,
 	SoftwareInfo,
@@ -149,6 +150,9 @@ def collect_pytest(file: Path) -> list[TestTrace]:
 
 	return plugin.traces
 
+
+def parse_package(file: Path, type: PackageType) -> SoftwareInfo:
+	return parse_package_xml(file)
 
 def parse_package_xml(file: Path) -> SoftwareInfo:
 	tree = ET.parse(file)

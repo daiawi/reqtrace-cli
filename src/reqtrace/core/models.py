@@ -1,18 +1,25 @@
 # src/reqtrace/models.py
 from __future__ import annotations
 
+import json
 from dataclasses import asdict, dataclass, field
+from enum import StrEnum
 from pathlib import Path
 from typing import Literal
 
-import json
 
 @dataclass
 class Package:
 	root: Path
-	package_xml: Path
+	package_path: Path
+	package_type: PackageType
 	requirements_md: list[Path] = field(default_factory=list)
 	tests: list[Path] = field(default_factory=list)
+
+
+class PackageType(StrEnum):
+	PYTHON = "pyproject.toml"
+	ROS = "package.xml"
 
 
 @dataclass

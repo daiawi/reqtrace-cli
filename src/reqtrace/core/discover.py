@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from .models import Package
+from .models import Package, PackageType
 
 
 def find_packages(root: Path) -> list[Package]:
@@ -15,7 +15,8 @@ def find_packages(root: Path) -> list[Package]:
 
 		packages.append(Package(
 			root=pkg_root,
-			package_xml=package_xml,
+			package_path=package_xml,
+			package_type=PackageType.ROS,
 			requirements_md=requirements,
 			tests=tests
 		))
