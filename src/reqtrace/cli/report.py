@@ -38,7 +38,6 @@ def report(dir: Path, json_output: bool, package_select: str | None):
 	pkg_reports = []
 	for pkg in packages:
 		reqtraces = extract_req_traces(pkg)
-
 		report = TraceReport(software=pkg.software_info, requirements=reqtraces)
 		pkg_reports.append(report)
 
