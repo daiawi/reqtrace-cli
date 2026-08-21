@@ -52,7 +52,7 @@ def test_find_python_project(python_project):
 
     package = packages[0]
     assert package.root == python_project / "python_project"
-    assert package.package_path == python_project / "python_project" / "pyproject.toml"
+    assert package.config_path == python_project / "python_project" / "pyproject.toml"
     assert package.package_type == PackageType("pyproject.toml")
     assert package.requirements_md == [
         python_project / "python_project" / "REQUIREMENTS.md"
@@ -66,7 +66,7 @@ def test_find_ros_project(ros_project):
 
     package = packages[0]
     assert package.root == ros_project / "ros_project"
-    assert package.package_path == ros_project / "ros_project" / "package.xml"
+    assert package.config_path == ros_project / "ros_project" / "package.xml"
     assert package.package_type == PackageType("package.xml")
     assert package.requirements_md == [
         ros_project / "ros_project" / "REQUIREMENTS.md"

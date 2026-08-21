@@ -59,7 +59,7 @@ def collect_package(config: Path, package_configs: set[Path]) -> Package:
 
 	return Package(
 		root=config.parent,
-		package_path=config,
+		config_path=config,
 		package_type=package_type,
 		requirements_md=requirements,
 		tests = tests

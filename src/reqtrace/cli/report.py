@@ -4,7 +4,6 @@ import click
 
 from ..core.discover import find_packages
 from ..core.models import TraceReport, reports_to_json
-from ..core.parse import parse_package_xml
 from ..core.trace import extract_req_traces
 
 
@@ -30,10 +29,9 @@ def report(dir, json_output):
 
 	pkg_reports = []
 	for pkg in packages:
-		software = parse_package_xml(pkg.package_path)
 		reqtraces = extract_req_traces(pkg)
 
-		report = TraceReport(software=software, requirements=reqtraces)
+		report = TraceReport(software=pkg.software_info, requirements=reqtraces)
 		pkg_reports.append(report)
 
 	if json_output:
