@@ -1,10 +1,11 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 import click
 
 from ..core.discover import find_packages
 from ..core.models import TraceReport, reports_to_json
-from ..core.parse import parse_package_xml
 from ..core.trace import extract_req_traces
 
 
@@ -22,18 +23,22 @@ from ..core.trace import extract_req_traces
 	is_flag=True,
 	default=False
 )
-def report(dir, json_output):
+@click.option(
+	'--package-select',
+	type=str,
+	default=None,
+	help="Only return packages matching this name"
+)
+def report(dir: Path, json_output: bool, package_select: str | None):
 	"""Creates a requirements-to-tests traceability report."""
-	all_packages = find_packages(dir)
+	all_packages = find_packages(dir, filter=package_select)
 
 	packages = [pkg for pkg in all_packages if pkg.requirements_md]
 
 	pkg_reports = []
 	for pkg in packages:
-		software = parse_package_xml(pkg.package_xml)
 		reqtraces = extract_req_traces(pkg)
-
-		report = TraceReport(software=software, requirements=reqtraces)
+		report = TraceReport(software=pkg.software_info, requirements=reqtraces)
 		pkg_reports.append(report)
 
 	if json_output:

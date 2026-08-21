@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.0.9] - 2026-08-21
+
+### Added
+- Support for pyproject.toml based package configs
+- New `--package-select` option for `reqtrace scan` and `reqtrace report`
+
+### Changed
+- Using a single `os.walk(dir)` rather than over-usage of rglob everywhere
+- Finding tests and requirements no longer includes those owned by subpackages
+
 ## [0.0.8] - 2026-08-18
 
 ### Added

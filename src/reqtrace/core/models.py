@@ -1,18 +1,70 @@
 # src/reqtrace/models.py
 from __future__ import annotations
 
+import json
+import tomllib
+import xml.etree.ElementTree as ET
 from dataclasses import asdict, dataclass, field
+from enum import StrEnum
 from pathlib import Path
 from typing import Literal
 
-import json
 
 @dataclass
 class Package:
 	root: Path
-	package_xml: Path
+	config_path: Path
+	package_type: PackageType
 	requirements_md: list[Path] = field(default_factory=list)
 	tests: list[Path] = field(default_factory=list)
+
+	@property
+	def name(self) -> str:
+		return self.software_info.name
+
+	@property
+	def version(self) -> str:
+		return self.software_info.version
+
+	@property
+	def software_info(self) -> SoftwareInfo:
+		name = ""
+		version = ""
+
+		if self.package_type == PackageType.ROS:
+			name, version = self.parse_package_xml(self.config_path)
+
+		elif self.package_type == PackageType.PYTHON:
+			name, version = self.parse_pyproject_toml(self.config_path)
+
+		return SoftwareInfo(name=name, version=version)
+
+	@staticmethod
+	def parse_package_xml(file: Path) -> tuple[str, str]:
+		tree = ET.parse(file)
+		root = tree.getroot()
+
+		name = root.findtext("name", "")
+		version = root.findtext("version", "")
+
+		return (name, version)
+
+	@staticmethod
+	def parse_pyproject_toml(file: Path) -> tuple[str, str]:
+		py_project = tomllib.loads(file.read_text(encoding="utf-8"))
+
+		project = py_project.get("project", {})
+
+		name = project.get("name", "")
+		version = project.get("version", "")
+
+		return (name, version)
+
+
+
+class PackageType(StrEnum):
+	PYTHON = "pyproject.toml"
+	ROS = "package.xml"
 
 
 @dataclass

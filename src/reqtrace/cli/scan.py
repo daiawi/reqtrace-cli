@@ -1,4 +1,6 @@
 # src/reqtrace/cli_scan.py
+from __future__ import annotations
+
 from pathlib import Path
 
 import click
@@ -24,10 +26,16 @@ from ..core.discover import Package, find_packages
 	'req_paths_only', 
 	is_flag=True,
 	help="Print only paths to requirements files"
-	)
-def scan(dir: Path, show_all: bool, req_paths_only: bool):
+)
+@click.option(
+	'--package-select',
+	type=str,
+	default=None,
+	help="Only return packages matching this name",
+)
+def scan(dir: Path, show_all: bool, req_paths_only: bool, package_select: str | None):
 	"""Search directory for paths to requirements, tests, and package descriptions"""
-	all_packages = find_packages(dir)
+	all_packages = find_packages(dir, filter=package_select)
 
 	# Filter package list based on whether requirements are present
 	packages = (

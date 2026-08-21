@@ -3,8 +3,8 @@ from pathlib import Path
 
 import click
 
-from ..core.models import ParsedRequirements, TestTrace
-from ..core.parse import collect_pytest, parse_package_xml, parse_requirements_file
+from ..core.models import Package, PackageType, ParsedRequirements, TestTrace
+from ..core.parse import collect_pytest, parse_requirements_file
 from ..core.trace import build_requirement_test_map
 
 
@@ -118,8 +118,17 @@ def _traceability_report(traces: list[TestTrace]) -> str:
 )
 def parse_package(file: Path):
 	"""Extract software information from package"""
-	software = parse_package_xml(file)
+	package_type = PackageType(file.name)
+
+	name = ""
+	version = ""
+
+	if package_type == PackageType.ROS:
+		name, version = Package.parse_package_xml(file)
+		
+	elif package_type == PackageType.PYTHON:
+		name, version = Package.parse_pyproject_toml(file)
 
 	click.echo(f"File: {file}\n")
-	click.echo(f"Software Name: {software.name}")
-	click.echo(f"Version: {software.version}")
+	click.echo(f"Software Name: {name}")
+	click.echo(f"Version: {version}")

@@ -1,26 +1,80 @@
 # src/reqtrace/discover.py
 
+from __future__ import annotations
+
+import os
 from pathlib import Path
 
-from .models import Package
+from .models import Package, PackageType
 
 
-def find_packages(root: Path) -> list[Package]:
+def find_packages(root: Path, filter: str | None = None) -> list[Package]:
 	packages = []
-	for package_xml in root.rglob("package.xml"):
-		pkg_root = package_xml.parent
 
-		requirements = list(pkg_root.rglob("REQUIREMENTS.md"))
-		tests = find_tests(pkg_root)
+	package_configs = find_package_configs(root)
 
-		packages.append(Package(
-			root=pkg_root,
-			package_xml=package_xml,
-			requirements_md=requirements,
-			tests=tests
-		))
+	for config in package_configs:
+		package = collect_package(config, package_configs)
+
+		if filter is None or package.name == filter:
+			packages.append(package)
 
 	return packages
 
-def find_tests(root: Path) -> list[Path]:
-	return list(root.rglob("test_*.py")) + list(root.rglob("*_test.py"))
+
+def find_package_configs(root: Path) -> set[Path]:
+    configs = set()
+
+    for current, dirs, files in os.walk(root):
+        current_path = Path(current)
+
+        for package_type in PackageType:
+            if package_type.value in files:
+                configs.add(current_path / package_type.value)
+
+    return configs
+
+
+def collect_package(config: Path, package_configs: set[Path]) -> Package:
+	package_type = PackageType(config.name)
+	package_roots = {config.parent for config in package_configs}
+
+	requirements = []
+	tests = []
+
+	for current, dirs, files in os.walk(config.parent):
+		current_path = Path(current)
+
+		for directory in dirs[:]:
+			child = current_path / directory
+
+			if child in package_roots and child != config:
+				dirs.remove(directory)
+
+		if "REQUIREMENTS.md" in files:
+			requirements.append(current_path / "REQUIREMENTS.md")
+
+		tests.extend(
+			current_path / file
+			for file in files
+			if is_test(current_path / file)
+		)
+
+
+	return Package(
+		root=config.parent,
+		config_path=config,
+		package_type=package_type,
+		requirements_md=requirements,
+		tests = tests
+	)
+
+
+def is_test(entry: Path) -> bool:
+	if not entry.is_file():
+		return False
+
+	is_pytest = (entry.suffix == ".py" and entry.name.startswith("test_")) or entry.name.endswith("_test.py")
+	is_gtest = (entry.suffix == ".cpp" and entry.name.startswith("test_")) or entry.name.endswith("_test.cpp")
+
+	return is_pytest or is_gtest
