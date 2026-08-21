@@ -31,8 +31,9 @@ def find_package_configs(root: Path) -> set[Path]:
     return configs
 
 
-def collect_package(config: Path, package_roots: set[Path]) -> Package:
+def collect_package(config: Path, package_configs: set[Path]) -> Package:
 	package_type = PackageType(config.name)
+	package_roots = {config.parent for config in package_configs}
 
 	requirements = []
 	tests = []
