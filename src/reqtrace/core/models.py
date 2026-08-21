@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import tomllib
 import xml.etree.ElementTree as ET
 from dataclasses import asdict, dataclass, field
 from enum import StrEnum
@@ -34,7 +35,7 @@ class Package:
 			name, version = self.parse_package_xml(self.config_path)
 
 		elif self.package_type == PackageType.PYTHON:
-			pass
+			name, version = self.parse_pyproject_toml(self.config_path)
 
 		return SoftwareInfo(name=name, version=version)
 
@@ -45,7 +46,19 @@ class Package:
 
 		name = root.findtext("name", "")
 		version = root.findtext("version", "")
-		return (name,version)
+
+		return (name, version)
+
+	@staticmethod
+	def parse_pyproject_toml(file: Path) -> tuple[str, str]:
+		py_project = tomllib.loads(file.read_text(encoding="utf-8"))
+
+		project = py_project.get("project", {})
+
+		name = project.get("name", "")
+		version = project.get("version", "")
+
+		return (name, version)
 
 
 
