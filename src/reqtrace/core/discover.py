@@ -1,19 +1,23 @@
 # src/reqtrace/discover.py
 
+from __future__ import annotations
+
 import os
 from pathlib import Path
 
 from .models import Package, PackageType
 
 
-def find_packages(root: Path) -> list[Package]:
+def find_packages(root: Path, filter: str | None = None) -> list[Package]:
 	packages = []
 
 	package_configs = find_package_configs(root)
 
 	for config in package_configs:
 		package = collect_package(config, package_configs)
-		packages.append(package)
+
+		if filter is None or package.name == filter:
+			packages.append(package)
 
 	return packages
 
