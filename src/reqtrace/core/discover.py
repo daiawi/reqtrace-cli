@@ -49,6 +49,13 @@ def collect_package(config: Path, package_roots: set[Path]) -> Package:
 		if "REQUIREMENTS.md" in files:
 			requirements.append(current_path / "REQUIREMENTS.md")
 
+		tests.extend(
+			current_path / file
+			for file in files
+			if is_test(current_path / file)
+		)
+
+
 	return Package(
 		root=config.parent,
 		package_path=config,
@@ -58,5 +65,11 @@ def collect_package(config: Path, package_roots: set[Path]) -> Package:
 	)
 
 
-def find_tests(root: Path) -> list[Path]:
-	return list(root.rglob("test_*.py")) + list(root.rglob("*_test.py"))
+def is_test(entry: Path) -> bool:
+	if not entry.is_file():
+		return False
+
+	is_pytest = (entry.suffix == ".py" and entry.name.startswith("test_")) or entry.name.endswith("_test.py")
+	is_gtest = (entry.suffix == ".cpp" and entry.name.startswith("test_")) or entry.name.endswith("_test.cpp")
+
+	return is_pytest or is_gtest
