@@ -3,7 +3,7 @@ import pytest
 from reqtrace.core.parse import check_file_format, extract_requirements
 
 
-@pytest.mark.req('REQ-5')
+@pytest.mark.req('REQ-05')
 def test_check_file_format_valid():
 	issues = check_file_format(
 		"REQUIREMENTS.md",
@@ -13,7 +13,7 @@ def test_check_file_format_valid():
 	assert issues == []
 
 
-@pytest.mark.req('REQ-2')
+@pytest.mark.req('REQ-02')
 @pytest.mark.parametrize("title, lines",
 	[
 		pytest.param("invalid_title.md", ["# Requirements"], id="bad-title"),
@@ -29,7 +29,7 @@ def test_check_file_format_invalid(title, lines):
 	assert issues != []
 
 
-@pytest.mark.req('REQ-1')
+@pytest.mark.req('REQ-01')
 @pytest.mark.parametrize("lines, req_id, description",
 	[
 		pytest.param(["REQ-1: Be curious, not judgmental."], "REQ-1", "Be curious, not judgmental.", id="good-req")	
