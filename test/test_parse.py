@@ -49,6 +49,7 @@ def test_check_file_format_invalid(title, lines):
                 "You know how they say youth is wasted on the young?\n"
                 "Well I say don't let the wisdom of age be wasted on you."
             ),
+			marks=pytest.mark.req("REQ-04"),
             id="multi-line-req",
         ),
     ],
