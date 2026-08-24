@@ -7,7 +7,8 @@ REQ-02: The parser shall return an issue for each improperly formatted requireme
 
 REQ-03: The parser shall return an issue for each incorrectly formatted requirement.
 
-REQ-04: The parser shall be able to support a requirement spanning multiple lines without separating blank lines.
+REQ-04: The parser shall be able to support a requirement spanning multiple lines 
+without separating blank lines.
 
 REQ-05: The parser shall not return an issue if the file and all requirements are correctly formatted.
 
