@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.0.10] - 2026-08-23
+
+### Added
+- Support for multi-line requirement descriptions as long as they do not contain blank lines.
+
 ## [0.0.9] - 2026-08-21
 
 ### Added

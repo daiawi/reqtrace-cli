@@ -46,7 +46,8 @@ def requirements(input_file: Path):
 			click.echo(f"Found {len(valid_reqs)} valid requirements:\n")
 
 			for req in valid_reqs:
-				click.echo(f"\t{req.id}: {req.description}\n")
+				description = req.description.replace("\n","\n\t")
+				click.echo(f"\t{req.id}: {description}\n")
 
 
 def _display_parsed_req_issues(parsed_reqs: ParsedRequirements):

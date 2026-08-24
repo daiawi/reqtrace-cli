@@ -29,12 +29,32 @@ def test_check_file_format_invalid(title, lines):
 	assert issues != []
 
 
-@pytest.mark.req('REQ-01')
-@pytest.mark.parametrize("lines, req_id, description",
-	[
-		pytest.param(["REQ-1: Be curious, not judgmental."], "REQ-1", "Be curious, not judgmental.", id="good-req")	
-	]
+@pytest.mark.req("REQ-01")
+@pytest.mark.parametrize(
+    "lines, req_id, description",
+    [
+        pytest.param(
+            ["REQ-1: Be curious, not judgmental."],
+            "REQ-1",
+            "Be curious, not judgmental.",
+            id="good-req",
+        ),
+        pytest.param(
+            [
+                "REQ-2: You know how they say youth is wasted on the young?",
+                "Well I say don't let the wisdom of age be wasted on you.",
+            ],
+            "REQ-2",
+            (
+                "You know how they say youth is wasted on the young?\n"
+                "Well I say don't let the wisdom of age be wasted on you."
+            ),
+			marks=pytest.mark.req("REQ-04"),
+            id="multi-line-req",
+        ),
+    ],
 )
+
 def test_extract_requirements_valid(lines, req_id, description):
 	reqs = extract_requirements(lines)
 
