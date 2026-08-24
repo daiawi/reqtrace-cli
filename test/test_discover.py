@@ -45,6 +45,7 @@ def ros_project(tmp_path):
     return tmp_path
 
 
+@pytest.mark.req("REQ-06")
 def test_find_python_project(python_project):
     packages = find_packages(python_project)
 
@@ -59,6 +60,7 @@ def test_find_python_project(python_project):
     ]
 
 
+@pytest.mark.req("REQ-07")
 def test_find_ros_project(ros_project):
     packages = find_packages(ros_project)
 
