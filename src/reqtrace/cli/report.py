@@ -68,7 +68,15 @@ def _traceability_report(report: TraceReport) -> str:
 	]
 
 	for trace in sorted(traces, key=lambda trace: trace.req_id):
-		lines.append(f"{trace.req_id}: {trace.description}")
+		tested = bool(trace.test_ids)
+		color = "green" if tested else "red"
+
+		requirement = click.style(
+			f"{trace.req_id}: {trace.description}",
+			fg=color,
+		)
+
+		lines.append(requirement)
 
 		for test_id in trace.test_ids:
 			test_name = test_id.split("::")[-1]
