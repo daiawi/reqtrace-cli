@@ -50,11 +50,13 @@ def check_file_format(file_name: str, lines: list[str]) -> list[FormatIssue]:
 def extract_requirements(lines: list[str]) -> list[Requirement]:
 	reqs = []
 	category = None
+	track_description = False
 
 	for line_number, line in enumerate(lines, start=1):
 			stripped = line.strip()
 
 			if not stripped:
+				track_description = False
 				continue
 
 			if stripped.startswith("## "):
@@ -64,10 +66,13 @@ def extract_requirements(lines: list[str]) -> list[Requirement]:
 			parts = line.split(":", 1)
 
 			if len(parts) != 2:
+				if reqs and track_description:
+					reqs[-1].description += "\n" + stripped
 				continue
 
 			id = parts[0].strip()
 			description = parts[1].strip()
+			track_description = True
 			reqs.append(Requirement(
 				id=id,
 				description=description,
@@ -136,7 +141,7 @@ def collect_pytest(file: Path) -> list[TestTrace]:
 		[
 			"--collect-only",
 			"-p",
-        	"no:terminal",
+			"no:terminal",
 			str(file),
 		],
 		plugins=[plugin]
