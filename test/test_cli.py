@@ -1,10 +1,12 @@
 from textwrap import dedent
 
+import pytest
 from click.testing import CliRunner
 
 from reqtrace.cli.main import cli
 
 
+@pytest.mark.req("REQ-08")
 def test_parse_requirements_succeeds(tmp_path):
 	requirements = tmp_path / "REQUIREMENTS.md"
 	requirements.write_text(
@@ -39,6 +41,7 @@ def test_parse_requirements_invalid_file_fails(tmp_path):
 	assert "Provided file is empty" in result.output
 
 
+@pytest.mark.req("REQ-09")
 def test_parse_pytest_succeeds(tmp_path):
 	test = tmp_path / "test_something.py"
 	test.write_text(dedent("""

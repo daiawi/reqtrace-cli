@@ -29,7 +29,13 @@ from ..core.trace import extract_req_traces
 	default=None,
 	help="Only return packages matching this name"
 )
-def report(dir: Path, json_output: bool, package_select: str | None):
+@click.option(
+	'--filter',
+	type=click.Choice(['all','missing','tested']),
+	default='all',
+	help="Filter requirements in human readable report to `all`, `missing`, or `tested"
+)
+def report(dir: Path, json_output: bool, package_select: str | None, filter: str):
 	"""Creates a requirements-to-tests traceability report."""
 	all_packages = find_packages(dir, filter=package_select)
 
@@ -45,12 +51,17 @@ def report(dir: Path, json_output: bool, package_select: str | None):
 		click.echo(reports_to_json(pkg_reports))
 	else:
 		for report in pkg_reports:
-			click.echo(_traceability_report(report))
+			click.echo(_traceability_report(report, filter))
 			
 
 
-def _traceability_report(report: TraceReport) -> str:
+def _traceability_report(report: TraceReport, filter: str = "all") -> str:
 	traces = report.requirements
+
+	if filter == "missing":
+		traces = [trace for trace in traces if not trace.test_ids]
+	elif filter == "tested":
+		traces = [trace for trace in traces if trace.test_ids]
 
 	test_ids = {
 		test_id
@@ -68,7 +79,15 @@ def _traceability_report(report: TraceReport) -> str:
 	]
 
 	for trace in sorted(traces, key=lambda trace: trace.req_id):
-		lines.append(f"{trace.req_id}: {trace.description}")
+		tested = bool(trace.test_ids)
+		color = "green" if tested else "red"
+
+		requirement = click.style(
+			f"{trace.req_id}: {trace.description}",
+			fg=color,
+		)
+
+		lines.append(requirement)
 
 		for test_id in trace.test_ids:
 			test_name = test_id.split("::")[-1]

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.11] - 2026-09-09
+
+### Added
+- New `--filter` option for `reqtrace report`
+	- Options for filter are `all`, `missing`, and `tested`
+- Color coding to `reqtrace report` console output
+
 ## [0.0.10] - 2026-08-23
 
 ### Added
